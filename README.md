@@ -95,3 +95,31 @@ issues were documented for further investigation.
 
 - `notebooks/05_model_development.ipynb`
 - `results/model_results.csv`
+### Treatment Mapper
+
+The Treatment Mapper connects the predicted disease class from the MobileNetV3-Small classifier to corresponding treatment, prevention and project-level severity information.
+
+The mapper supports all 15 disease/healthy-leaf classes used by the classifier.
+
+#### Treatment Mapper Components
+
+- `src/treatment/treatment_mapper.py` — loads disease information and returns treatment recommendations.
+- `src/treatment/treatment_mapping.json` — stores treatment, prevention and severity information for all 15 classes.
+- `tests/test_treatment_mapper.py` — validates known disease mappings and unknown-disease handling.
+
+#### Inference Integration
+
+The TFLite inference pipeline was integrated with the Treatment Mapper.
+
+The inference flow is:
+
+```text
+Leaf Image
+    ↓
+MobileNetV3-Small FP32 TFLite Model
+    ↓
+Predicted Disease + Confidence
+    ↓
+Treatment Mapper
+    ↓
+Severity + Treatment + Prevention
