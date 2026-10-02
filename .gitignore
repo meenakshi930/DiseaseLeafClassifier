@@ -13,3 +13,6 @@ env/
 # OS files
 .DS_Store
 Thumbs.db
+# Local model and test image
+*.tflite
+test_leaf.jpg
