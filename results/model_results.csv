@@ -1,0 +1,5 @@
+Model,Accuracy,Precision,Recall,F1,Model_Size,Mean_Latency
+Frozen MobileNetV3-Small,90.89,91.35,90.89,90.93,,
+Fine-tuned MobileNetV3-Small,93.21,93.43,93.21,93.23,,
+TFLite FP32,93.21,93.43,93.21,93.23,3.60 MB,5.720 ms
+TFLite INT8,59.04,79.75,59.04,61.48,1.18 MB,13.531 ms
