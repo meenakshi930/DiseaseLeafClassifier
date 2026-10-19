@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h1>Scan a leaf</h1>
+  <p class="muted">Take a clear photo of a single leaf (tomato, potato or bell pepper) in good light.</p>
+  {% if error %}<p class="alert">{{ error }}</p>{% endif %}
+  <form action="{{ url_for('diagnose') }}" method="post" enctype="multipart/form-data">
+    <input type="file" name="image" accept="image/*" capture="environment" required>
+    <button type="submit">Diagnose</button>
+  </form>
+</section>
+{% endblock %}
