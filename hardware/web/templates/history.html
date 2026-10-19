@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Scan history</h1>
+  {% if rows %}
+  <div class="scroll"><table>
+    <tr><th>Time</th><th>Disease</th><th>Conf.</th><th>Severity</th><th>GPS</th></tr>
+    {% for row in rows %}
+    <tr>
+      <td>{{ row.timestamp }}</td>
+      <td>{{ row.disease | pretty }}</td>
+      <td>{{ (row.confidence | float * 100) | round(1) }}%</td>
+      <td>{{ row.severity }}</td>
+      <td>{% if row.latitude %}{{ row.latitude }}, {{ row.longitude }}{% else %}-{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </table></div>
+  {% else %}<p class="muted">No scans yet.</p>{% endif %}
+</section>
+{% endblock %}
