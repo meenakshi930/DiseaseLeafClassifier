@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <img class="leaf" src="{{ url_for('uploads', name=image_name) }}" alt="Scanned leaf">
+
+  <h1>{{ r.disease | pretty }}</h1>
+  <span class="badge sev-{{ r.severity | lower }}">Severity: {{ r.severity }}</span>
+
+  <div class="bar" role="img" aria-label="Confidence {{ (r.confidence * 100) | round(1) }} percent">
+    <div class="fill" style="width: {{ (r.confidence * 100) | round(1) }}%"></div>
+  </div>
+  <p class="muted">Confidence: <strong>{{ (r.confidence * 100) | round(1) }}%</strong></p>
+
+  {% if not r.is_confident %}
+  <p class="alert">Low confidence - the model is not sure. Retake the photo: one leaf, good light, leaf filling the frame.</p>
+  {% endif %}
+
+  <h2>Treatment</h2>
+  <ul>{% for t in r.treatment %}<li>{{ t }}</li>{% endfor %}</ul>
+
+  <h2>Prevention</h2>
+  <ul>{% for p in r.prevention %}<li>{{ p }}</li>{% endfor %}</ul>
+
+  <h2>Other possibilities</h2>
+  <ol class="topk">{% for k in r.top_k %}
+    <li><span>{{ k["class"] | pretty }}</span><span>{{ (k.confidence * 100) | round(1) }}%</span></li>
+  {% endfor %}</ol>
+
+  <a class="button" href="{{ url_for('index') }}">Scan another leaf</a>
+</section>
+{% endblock %}
