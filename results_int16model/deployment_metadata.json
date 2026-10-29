@@ -1,0 +1,37 @@
+{
+  "model_name": "DiseaseLeafClassifier_MobileNetV3Small",
+  "format": "TensorFlow Lite",
+  "optimization": "FP16 weight quantization",
+  "input_shape": [
+    1,
+    224,
+    224,
+    3
+  ],
+  "input_dtype": "<class 'numpy.float32'>",
+  "output_shape": [
+    1,
+    15
+  ],
+  "output_dtype": "<class 'numpy.float32'>",
+  "num_classes": 15,
+  "model_size_mb": 1.84,
+  "test_accuracy": 0.932138,
+  "classes": [
+    "Pepper__bell___Bacterial_spot",
+    "Pepper__bell___healthy",
+    "Potato___Early_blight",
+    "Potato___Late_blight",
+    "Potato___healthy",
+    "Tomato_Bacterial_spot",
+    "Tomato_Early_blight",
+    "Tomato_Late_blight",
+    "Tomato_Leaf_Mold",
+    "Tomato_Septoria_leaf_spot",
+    "Tomato_Spider_mites_Two_spotted_spider_mite",
+    "Tomato__Target_Spot",
+    "Tomato__Tomato_YellowLeaf__Curl_Virus",
+    "Tomato__Tomato_mosaic_virus",
+    "Tomato_healthy"
+  ]
+}

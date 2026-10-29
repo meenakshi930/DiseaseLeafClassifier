@@ -1,0 +1,37 @@
+{
+  "project": "DiseaseLeafClassifier",
+  "architecture": "MobileNetV3Small",
+  "test_images": 2063,
+  "models": {
+    "FP32": {
+      "accuracy_percent": 93.1653,
+      "size_mb": 3.6,
+      "latency_ms_per_image": 2.36
+    },
+    "FP16": {
+      "accuracy_percent": 93.2138,
+      "precision": 0.9354,
+      "recall": 0.9321,
+      "f1_score": 0.9324,
+      "size_mb": 1.84,
+      "latency_ms_per_image": 2.43
+    },
+    "INT8": {
+      "accuracy_percent": 69.6074,
+      "precision": 0.8206,
+      "recall": 0.6961,
+      "f1_score": 0.7089,
+      "size_mb": 1.18
+    },
+    "INT8_calibrated": {
+      "accuracy_percent": 57.4891,
+      "precision": 0.8037,
+      "recall": 0.5749,
+      "f1_score": 0.575,
+      "size_mb": 1.18
+    }
+  },
+  "recommended_candidate": "FP16",
+  "deployment_status": "Pending Raspberry Pi testing",
+  "latency_environment": "Kaggle benchmark; not Raspberry Pi latency"
+}
