@@ -25,3 +25,5 @@ button, .button { display:inline-block; background:var(--green); color:#fff; bor
 .scroll { overflow-x:auto; } table { width:100%; border-collapse:collapse; font-size:.9rem; }
 th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); white-space:nowrap; }
 footer { text-align:center; color:var(--muted); font-size:.8rem; padding:20px; }
+.small { font-size:.85rem; margin:.4rem 0 0; }
+form + h2 { margin-top:1.6rem; }
