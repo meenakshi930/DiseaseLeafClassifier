@@ -1,12 +1,15 @@
-{% extends "base.html" %}
-{% block content %}
-<section class="card">
-  <h1>Scan a leaf</h1>
-  <p class="muted">Take a clear photo of a single leaf (tomato, potato or bell pepper) in good light.</p>
-  {% if error %}<p class="alert">{{ error }}</p>{% endif %}
-  <form action="{{ url_for('diagnose') }}" method="post" enctype="multipart/form-data">
-    <input type="file" name="image" accept="image/*" capture="environment" required>
-    <button type="submit">Diagnose</button>
-  </form>
-</section>
+{% extends "base.html" %} {% block content %}
+Scan a leaf
+Use one leaf, plain background, good light, leaf filling the frame (tomato, potato or bell pepper).
+
+{% if error %}
+{{ error }}
+
+{% endif %}
+Take a photo with the device camera
+Capture and diagnose
+Camera: {{ camera_name }}
+
+Or upload a photo
+No file chosen Diagnose
 {% endblock %}
