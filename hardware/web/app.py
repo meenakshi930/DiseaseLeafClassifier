@@ -1,3 +1,4 @@
+
 """Flask web page: upload / capture a leaf photo and see the diagnosis.
 
 Run from the project root:
@@ -12,6 +13,7 @@ from pathlib import Path
 from flask import Flask, abort, render_template, request, send_from_directory
 from PIL import Image, UnidentifiedImageError
 
+from hardware.camera import CameraError, get_camera
 from hardware.storage.logger import DiagnosisLogger
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -43,8 +45,8 @@ def pretty_name(class_name):
     return DISPLAY_NAMES.get(class_name, class_name.replace("_", " ").strip())
 
 
-def create_app(diagnosis=None, logger=None, upload_dir=UPLOAD_DIR):
-    """App factory. Tests pass a fake `diagnosis` / `logger` / `upload_dir`."""
+def create_app(diagnosis=None, logger=None, upload_dir=UPLOAD_DIR, camera=None):
+    """App factory. Tests pass fake `diagnosis` / `logger` / `upload_dir` / `camera`."""
     app = Flask(__name__)
     app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024      # 10 MB uploads
 
@@ -57,23 +59,42 @@ def create_app(diagnosis=None, logger=None, upload_dir=UPLOAD_DIR):
         diagnosis = Diagnosis()
     if logger is None:
         logger = DiagnosisLogger()
+    if camera is None:
+        camera = get_camera()          # Pi camera on the Pi, mock camera elsewhere
 
     app.jinja_env.filters["pretty"] = pretty_name
 
+    def show_result(image_path):
+        """Diagnose one saved photo, log it and render the result page."""
+        result = diagnosis.diagnose(str(image_path))
+        logger.log(result, image_path=Path(image_path).name)   # GPS added later
+        return render_template("result.html", r=result, image_name=Path(image_path).name)
+
+    def home(error=None, status=200):
+        return render_template("index.html", error=error, camera_name=camera.name), status
+
     @app.route("/")
     def index():
-        return render_template("index.html", error=None)
+        return home()
+
+    @app.route("/capture", methods=["POST"])
+    def capture():
+        """Take a photo with the camera (Pi camera or mock) and diagnose it."""
+        try:
+            image_path = camera.capture(upload_dir)
+        except CameraError as error:
+            return home(error=str(error), status=503)
+        return show_result(image_path)
 
     @app.route("/diagnose", methods=["POST"])
     def diagnose():
         file = request.files.get("image")
         if file is None or file.filename == "":
-            return render_template("index.html", error="Please choose a photo first."), 400
+            return home("Please choose a photo first.", 400)
 
         extension = Path(file.filename).suffix.lower()
         if extension not in ALLOWED_EXTENSIONS:
-            return render_template(
-                "index.html", error="Unsupported file type. Use JPG or PNG."), 400
+            return home("Unsupported file type. Use JPG or PNG.", 400)
 
         # random file name -> user-given names are never trusted
         saved = upload_dir / f"{uuid.uuid4().hex}{extension}"
@@ -83,12 +104,9 @@ def create_app(diagnosis=None, logger=None, upload_dir=UPLOAD_DIR):
             Image.open(saved).verify()                       # is it a real image?
         except (UnidentifiedImageError, OSError):
             saved.unlink(missing_ok=True)
-            return render_template(
-                "index.html", error="That file is not a valid image."), 400
+            return home("That file is not a valid image.", 400)
 
-        result = diagnosis.diagnose(str(saved))
-        logger.log(result, image_path=saved.name)            # GPS added later
-        return render_template("result.html", r=result, image_name=saved.name)
+        return show_result(saved)
 
     @app.route("/uploads/<name>")
     def uploads(name):
