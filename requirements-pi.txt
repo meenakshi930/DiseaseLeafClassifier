@@ -1,0 +1,4 @@
+# Extra packages for the Raspberry Pi only (setup_pi.sh installs these)
+-r requirements.txt
+pyserial>=3.5          # GPS module on /dev/serial0
+# gpiozero + lgpio come from apt (python3-gpiozero, python3-lgpio), see scripts/setup_pi.sh
