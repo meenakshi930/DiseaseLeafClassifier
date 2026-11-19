@@ -1,4 +1,3 @@
-
 """Flask web page: upload / capture a leaf photo and see the diagnosis.
 
 Run from the project root:
@@ -45,7 +44,7 @@ def pretty_name(class_name):
     return DISPLAY_NAMES.get(class_name, class_name.replace("_", " ").strip())
 
 
-def create_app(diagnosis=None, logger=None, upload_dir=UPLOAD_DIR, camera=None):
+def create_app(diagnosis=None, logger=None, upload_dir=UPLOAD_DIR, camera=None, gps=None):
     """App factory. Tests pass fake `diagnosis` / `logger` / `upload_dir` / `camera`."""
     app = Flask(__name__)
     app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024      # 10 MB uploads
@@ -67,7 +66,10 @@ def create_app(diagnosis=None, logger=None, upload_dir=UPLOAD_DIR, camera=None):
     def show_result(image_path):
         """Diagnose one saved photo, log it and render the result page."""
         result = diagnosis.diagnose(str(image_path))
-        logger.log(result, image_path=Path(image_path).name)   # GPS added later
+        fix = gps.get_fix() if gps is not None else None       # None = no GPS fix
+        latitude, longitude = fix if fix else (None, None)
+        logger.log(result, image_path=Path(image_path).name,
+                   latitude=latitude, longitude=longitude)
         return render_template("result.html", r=result, image_name=Path(image_path).name)
 
     def home(error=None, status=200):
