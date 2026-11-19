@@ -1,0 +1,9 @@
+# Python packages for the Leaf Disease Detector (laptop and Raspberry Pi)
+# Install:  pip install -r requirements.txt
+flask>=3.0
+pillow>=10.0
+numpy>=1.26
+
+# TFLite runtime: ai-edge-litert (new name of tflite-runtime).
+# If this line fails on your Python version, see requirements-pi.txt
+ai-edge-litert
