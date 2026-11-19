@@ -146,3 +146,13 @@ def test_home_page_has_capture_button_and_camera_name(client):
     page = client.get("/").data
     assert b"Capture and diagnose" in page
     assert b"fake camera" in page
+
+
+def test_scan_logs_gps_position_when_available(tmp_path):
+    from hardware.gps import FakeGps
+    logger = DiagnosisLogger(tmp_path / "log.csv")
+    app = create_app(diagnosis=FakeDiagnosis(), logger=logger, camera=FakeCamera(),
+                     upload_dir=tmp_path, gps=FakeGps(27.5, 77.5))
+    app.test_client().post("/capture")
+    row = logger.read_all()[0]
+    assert (row["latitude"], row["longitude"]) == ("27.5", "77.5")
